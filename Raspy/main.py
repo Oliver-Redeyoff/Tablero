@@ -1,22 +1,30 @@
 import schedule
 import time
-import ecranClient
+import json
+import asyncio
+import client
 
-def init():
+
+async def init():
     # get the latest config data from server
-    ecranClient.get_config()
+    config = await client.get_config()
 
     # init all the widgets that are in the current grid
-    init_widgets()
+    init_widgets(config.text)
 
     # schedule job per widget for refreshing their data
 
     # schedule a job for refreshing the screen
     schedule.every(3).seconds.do(draw_board)
 
-def init_widgets():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+def init_widgets(gridStr):
     # get object for each widget class
-    print("init_widgets");
+    grid = json.loads(gridStr)
+    print(grid)
 
 def draw_board():
     # draw all widgets
@@ -24,7 +32,4 @@ def draw_board():
 
 
 if __name__ == '__main__':
-    init()
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    asyncio.run(init())
