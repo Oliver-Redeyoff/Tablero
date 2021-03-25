@@ -1,17 +1,35 @@
+import sys
+import os
 import schedule
+import threading
 import time
 import json
 import asyncio
 import client
 import widgetLoader
 from PIL import Image,ImageDraw,ImageFont
+import logging
 
+libdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'lib')
+if os.path.exists(libdir):
+    sys.path.append(libdir)
+from waveshare_epd import epd7in5_V2
+
+
+epd = epd7in5_V2.EPD()
 grid = []
 refreshFrequency = 10
 gridTileSize = 100
 
 async def init():
-    global refreshFrequency, gridTileSize, grid
+    await cycle()
+    schedule.every(refreshFrequency).seconds.do(await cycle())
+
+async def cycle():
+    global epd, refreshFrequency, gridTileSize, grid
+    grid = []
+    refreshFrequency = 10
+    gridTileSize = 100
 
     # get the latest config data from server and set global vars
     config = json.loads(await client.get_config())
@@ -25,11 +43,8 @@ async def init():
     # schedule job per widget for refreshing their data
 
     # schedule a job for refreshing the screen
-    schedule.every(refreshFrequency).seconds.do(draw_board)
+    draw_board()
 
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
 
 def init_widgets():
     global refreshFrequency, gridTileSize, grid
@@ -40,10 +55,13 @@ def init_widgets():
     print(grid)
 
 def draw_board():
-    global refreshFrequency, gridTileSize, grid
+    global epd, refreshFrequency, gridTileSize, grid
+
+    epd.init()
+    epd.Clear()
 
     print("drawing board")
-    board_img = Image.new(mode='1', size=(400, 800), color=255)
+    board_img = Image.new(mode='1', size=(epd.height, epd.width), color=255)
     
     # render all widgets
     for widget in grid:
@@ -51,8 +69,14 @@ def draw_board():
         board_img.paste(img, (gridTileSize*widget['x'], gridTileSize*widget['y']))
     
     # use this for dev
-    board_img.show()
+    #board_img.show()
+    # use this for eink display
+    epd.display(epd.getbuffer(board_img))
 
 
 if __name__ == '__main__':
     asyncio.run(init())
+    #schedule.every(refreshFrequency).seconds.do(asyncio.run(init()))
+    #while True:
+    #    schedule.run_pending()
+    #    time.sleep(1)

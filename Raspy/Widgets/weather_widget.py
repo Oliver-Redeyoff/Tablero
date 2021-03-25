@@ -13,7 +13,7 @@ class widget:
         widget_draw = ImageDraw.Draw(widget_img)
         fnt = ImageFont.load_default()
         
-        widget_draw.rectangle(xy=[(0, 0), (100, 100)], outline=255, width= 5)
+        widget_draw.rectangle(xy=[(0, 0), (self.tileSize, self.tileSize)], outline=255, width= 5)
 
         widget_draw.text(xy=(10, 10), text='weather', font=fnt, fill=255)
 
