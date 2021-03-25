@@ -13,6 +13,9 @@ class widget:
         fnt = ImageFont.load_default()
         
         widget_draw.rectangle(xy=[(0, 0), (100, 100)], outline=255, width= 5)
+
         widget_draw.text(xy=(10, 10), text='weather', font=fnt, fill=255)
+
+        widget_draw.text(xy=(10, 30), text=self.config['location'], font=fnt, fill=255)
 
         return widget_img

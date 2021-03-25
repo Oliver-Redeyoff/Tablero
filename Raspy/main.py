@@ -13,14 +13,14 @@ gridTileSize = 100
 async def init():
     global refreshFrequency, gridTileSize, grid
 
-    # get the latest config data from server
+    # get the latest config data from server and set global vars
     config = json.loads(await client.get_config())
     grid = config['grid']
     refreshFrequency = config['config']['refreshFrequency']
     gridTileSize = config['config']['gridTileSize']
 
     # init all the widgets that are in the current grid
-    init_widgets(config)
+    init_widgets()
 
     # schedule job per widget for refreshing their data
 
@@ -31,11 +31,11 @@ async def init():
         schedule.run_pending()
         time.sleep(1)
 
-def init_widgets(configStr):
+def init_widgets():
     global refreshFrequency, gridTileSize, grid
 
     for widget in grid:
-        widget['ref'] = widgetLoader.getWidgeRef(widget['id'])
+        widget['ref'] = widgetLoader.getWidgeRef(widget['id'], widget['config'])
     
     print(grid)
 
