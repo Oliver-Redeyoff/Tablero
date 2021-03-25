@@ -23,7 +23,9 @@ gridTileSize = 100
 
 async def init():
     await cycle()
-    schedule.every(refreshFrequency).seconds.do(await cycle())
+    while True:
+        await cycle()
+        time.sleep(refreshFrequency)
 
 async def cycle():
     global epd, refreshFrequency, gridTileSize, grid
