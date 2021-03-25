@@ -35,7 +35,7 @@ def init_widgets():
     global refreshFrequency, gridTileSize, grid
 
     for widget in grid:
-        widget['ref'] = widgetLoader.getWidgeRef(widget['id'], widget['config'])
+        widget['ref'] = widgetLoader.getWidgeRef(widget['id'], widget, gridTileSize)
     
     print(grid)
 

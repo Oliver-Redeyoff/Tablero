@@ -2,13 +2,14 @@ from PIL import Image,ImageDraw,ImageFont
 
 class widget:
 
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, data, tileSize):
+        self.data = data
+        self.tileSize = tileSize
         print('weather widget initialised')
 
     def render(self):
         print('rendering weather')
-        widget_img = Image.new(mode='1', size=(100, 100), color=0)
+        widget_img = Image.new(mode='1', size=(self.tileSize, self.tileSize), color=0)
         widget_draw = ImageDraw.Draw(widget_img)
         fnt = ImageFont.load_default()
         
@@ -16,6 +17,6 @@ class widget:
 
         widget_draw.text(xy=(10, 10), text='weather', font=fnt, fill=255)
 
-        widget_draw.text(xy=(10, 30), text=self.config['location'], font=fnt, fill=255)
+        widget_draw.text(xy=(10, 30), text=self.data['config']['location'], font=fnt, fill=255)
 
         return widget_img
