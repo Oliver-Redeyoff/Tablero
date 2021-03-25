@@ -7,28 +7,32 @@ import widgetLoader
 from PIL import Image,ImageDraw,ImageFont
 
 grid = []
+refreshFrequency = 10
+gridTileSize = 100
 
 async def init():
+    global refreshFrequency, gridTileSize, grid
+
     # get the latest config data from server
-    config = await client.get_config()
+    config = json.loads(await client.get_config())
+    grid = config['grid']
+    refreshFrequency = config['config']['refreshFrequency']
+    gridTileSize = config['config']['gridTileSize']
 
     # init all the widgets that are in the current grid
-    init_widgets(config.text)
+    init_widgets(config)
 
     # schedule job per widget for refreshing their data
 
     # schedule a job for refreshing the screen
-    schedule.every(3).seconds.do(draw_board)
+    schedule.every(refreshFrequency).seconds.do(draw_board)
 
     while True:
         schedule.run_pending()
         time.sleep(1)
 
 def init_widgets(configStr):
-    global grid
-
-    # get object for each widget class
-    grid = json.loads(configStr)['grid']
+    global refreshFrequency, gridTileSize, grid
 
     for widget in grid:
         widget['ref'] = widgetLoader.getWidgeRef(widget['id'])
@@ -36,17 +40,18 @@ def init_widgets(configStr):
     print(grid)
 
 def draw_board():
+    global refreshFrequency, gridTileSize, grid
 
+    print("drawing board")
     board_img = Image.new(mode='1', size=(400, 800), color=255)
-
-    # draw all widgets
+    
+    # render all widgets
     for widget in grid:
         img = widget['ref'].render()
-        board_img.paste(img, (100*widget['x'], 100*widget['y']))
+        board_img.paste(img, (gridTileSize*widget['x'], gridTileSize*widget['y']))
     
+    # use this for dev
     board_img.show()
-
-    print("draw board")
 
 
 if __name__ == '__main__':

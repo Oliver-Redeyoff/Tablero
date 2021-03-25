@@ -9,4 +9,4 @@ async def get_config():
 
     resp = requests.post(url, json = body)
 
-    return resp
+    return resp.text
