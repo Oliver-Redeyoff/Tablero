@@ -71,7 +71,7 @@ def draw_board():
     # render all widgets
     for widget in grid:
         img = widget['ref'].render()
-        board_img.paste(img, (gridTileSize*widget['x'], gridTileSize*widget['y']))
+        board_img.paste(img, (gridTileSize*widget['x']+5, gridTileSize*widget['y']+5))
     
     # use this for dev
     #board_img.show()

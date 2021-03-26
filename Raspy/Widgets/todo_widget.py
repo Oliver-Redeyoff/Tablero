@@ -13,15 +13,15 @@ class widget:
         bg_color = 255 if self.config['config']['colorMode']=='light' else 0
         text_color = 0 if self.config['config']['colorMode']=='light' else 255
 
-        widget_width = self.tileSize*self.config['width']
-        widget_height = self.tileSize*self.config['height']
+        widget_width = self.tileSize*self.config['width'] - 10
+        widget_height = self.tileSize*self.config['height'] - 10
 
         widget_img = Image.new(mode='1', size=(widget_width, widget_height), color=bg_color)
         widget_draw = ImageDraw.Draw(widget_img)
         title_font = ImageFont.load_default()
         content_font = ImageFont.truetype('OpenSans.ttf', 16)
         
-        widget_draw.rectangle(xy=[(0, 0), (widget_width, widget_height)], outline=text_color, width= 5)
+        widget_draw.rectangle(xy=[(0, 0), (widget_width, widget_height)], outline=0, width= 5)
 
         widget_draw.text(xy=(10, 10), text='todo', font=title_font, fill=text_color)
 

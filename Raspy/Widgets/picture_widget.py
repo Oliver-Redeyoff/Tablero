@@ -23,13 +23,10 @@ class widget:
         
         widget_draw.rectangle(xy=[(0, 0), (widget_width, widget_height)], outline=0, width= 5)
 
-        widget_draw.text(xy=(10, 10), text='note', font=title_font, fill=text_color)
+        picture = Image.open('child_criminal.bmp')
+        picture = picture.resize((widget_width-10, widget_height-10))
+        widget_img.paste(picture, (5, 5))
 
-        note_lines = textwrap.wrap(self.config['config']['text'], width=round(widget_width* 0.1))
-        y_text = 30
-        for line in note_lines:
-            width, height = content_font.getsize(line)
-            widget_draw.text(((widget_width - width) / 2, y_text), line, font=content_font, fill=text_color)
-            y_text += height
+        
 
         return widget_img
