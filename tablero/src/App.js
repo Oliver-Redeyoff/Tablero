@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import {useState} from "react"
+import {
+  Button,
+  Navbar, 
+  NavbarBrand,
+  Nav,
+} from "shards-react"
+import HomePage from './pages/HomePage.js'
+import Editor from './pages/Editor.js'
 
 function App() {
+  const [homePage, setHomePage] = useState(true)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div>
+      <Navbar
+        type="dark"
+        theme="primary"
         >
-          Learn React
-        </a>
-      </header>
+        <NavbarBrand href="#">Tablero</NavbarBrand>
+        {homePage ?
+          <Nav navbar>
+            <Button onClick={() => setHomePage(!homePage)}>Get Started</Button>
+          </Nav> :
+          <></>
+        }
+      </Navbar>
+      {homePage ? <HomePage /> : <Editor />}
     </div>
   );
 }
