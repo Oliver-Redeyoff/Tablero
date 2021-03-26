@@ -18,24 +18,26 @@ from waveshare_epd import epd7in5_V2
 
 epd = epd7in5_V2.EPD()
 grid = []
+bgColor = 'white'
 refreshFrequency = 10
 gridTileSize = 100
 
 async def init():
-    await cycle()
     while True:
         await cycle()
         time.sleep(refreshFrequency)
 
 async def cycle():
-    global epd, refreshFrequency, gridTileSize, grid
+    global epd, refreshFrequency, gridTileSize, grid, bgColor
     grid = []
+    bgColor = 'white'
     refreshFrequency = 10
     gridTileSize = 100
 
     # get the latest config data from server and set global vars
     config = json.loads(await client.get_config())
     grid = config['grid']
+    bgColor = config['config']['bgColor']
     refreshFrequency = config['config']['refreshFrequency']
     gridTileSize = config['config']['gridTileSize']
 
@@ -49,7 +51,7 @@ async def cycle():
 
 
 def init_widgets():
-    global refreshFrequency, gridTileSize, grid
+    global gridTileSize, grid
 
     for widget in grid:
         widget['ref'] = widgetLoader.getWidgeRef(widget['id'], widget, gridTileSize)
@@ -57,13 +59,14 @@ def init_widgets():
     print(grid)
 
 def draw_board():
-    global epd, refreshFrequency, gridTileSize, grid
+    global epd, bgColor, gridTileSize, grid
 
     epd.init()
     epd.Clear()
 
     print("drawing board")
-    board_img = Image.new(mode='1', size=(epd.height, epd.width), color=255)
+    bg_color = 255 if bgColor=='light' else 0
+    board_img = Image.new(mode='1', size=(epd.height, epd.width), color=bg_color)
     
     # render all widgets
     for widget in grid:
