@@ -6,7 +6,7 @@ class widget:
     def __init__(self, config, tileSize):
         self.config = config
         self.tileSize = tileSize
-        print('note widget initialised')
+        print('todo widget initialised')
 
     def render(self):
         print('rendering note')
@@ -23,13 +23,18 @@ class widget:
         
         widget_draw.rectangle(xy=[(0, 0), (widget_width, widget_height)], outline=text_color, width= 5)
 
-        widget_draw.text(xy=(10, 10), text='note', font=title_font, fill=text_color)
+        widget_draw.text(xy=(10, 10), text='todo', font=title_font, fill=text_color)
 
-        note_lines = textwrap.wrap(self.config['config']['text'], width=round(widget_width* 0.1))
         y_text = 30
-        for line in note_lines:
-            width, height = content_font.getsize(line)
-            widget_draw.text(((widget_width - width) / 2, y_text), line, font=content_font, fill=text_color)
-            y_text += height
+        for item in self.config['config']['items']:
+            note_lines = textwrap.wrap(item, width=round(widget_width* 0.1))
+            count = 0
+            for line in note_lines:
+                width, height = content_font.getsize(line)
+                text = "• " + line if count==0 else line
+                widget_draw.text((20, y_text), text, font=content_font, fill=text_color)
+                y_text += height
+                count += 1
+            y_text += 15
 
         return widget_img

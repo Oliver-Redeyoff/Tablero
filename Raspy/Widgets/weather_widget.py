@@ -37,17 +37,18 @@ class widget:
 
         widget_img = Image.new(mode='1', size=(widget_width, widget_height), color=bg_color)
         widget_draw = ImageDraw.Draw(widget_img)
-        fnt = ImageFont.load_default()
+        title_font = ImageFont.load_default()
+        content_font = ImageFont.truetype('OpenSans.ttf', 16)
         
         widget_draw.rectangle(xy=[(0, 0), (widget_width, widget_height)], outline=text_color, width= 5)
 
-        widget_draw.text(xy=(10, 10), text='weather', font=fnt, fill=text_color)
+        widget_draw.text(xy=(10, 10), text='weather', font=title_font, fill=text_color)
 
         tempStr = str(weatherData['temp']) + " °C"
-        tempStrSize = fnt.getsize(tempStr)
+        tempStrSize = content_font.getsize(tempStr)
 
-        widget_draw.text(xy=(widget_width/2 - tempStrSize[0]/2, widget_height-35), text=str(weatherData['temp']) + " °C", font=fnt, fill=text_color)
+        widget_draw.text(xy=(widget_width/2 - tempStrSize[0]/2, widget_height-40), text=str(weatherData['temp']) + " °C", font=content_font, fill=text_color)
         weatherIcon = weatherData['icon'].resize((widget_width, widget_height))
-        widget_draw.bitmap((0, 0), weatherIcon)
+        widget_draw.bitmap((0, -5), weatherIcon)
 
         return widget_img
