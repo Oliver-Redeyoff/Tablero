@@ -1,9 +1,16 @@
-import { Container, Row, Col } from "shards-react";
+import { Container, Row, Col } from "react-bootstrap";
 
 function Editor() {
     return (
         <Container>
-            <h1>EDITOR</h1>
+            <Row>
+                <Col sm="12" lg="6" >
+                    <h1>Viewer</h1>
+                </Col>
+                <Col sm="12" lg="6" >
+
+                </Col>
+            </Row>
         </Container>
     )
 }

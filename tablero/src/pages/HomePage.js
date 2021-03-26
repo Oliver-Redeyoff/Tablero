@@ -1,9 +1,13 @@
-import { Container, Row, Col, ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText} from "shards-react";
-import {Player, BigPlayButton} from 'video-react'
+import { 
+    Container, 
+    Row, 
+    Col, 
+    ListGroup, 
+} from "react-bootstrap";
+import {Player, BigPlayButton, ControlBar} from 'video-react'
 import sushi from "../images/sushi-food.svg"
 import target from "../images/target.svg"
 import nggyu from "../images/nggyu.mp4"
-import ControlBar from "video-react/lib/components/control-bar/ControlBar";
 
 function HomePage() {
     return (
@@ -19,14 +23,16 @@ function HomePage() {
             <Row>
                 <Col sm="12" lg="6">
                     <ListGroup>
-                        <ListGroupItem>
-                            <ListGroupItemHeading>Displays</ListGroupItemHeading>
-                            <ListGroupItemText>Notes</ListGroupItemText>
-                            <ListGroupItemText>Weather</ListGroupItemText>
-                            <ListGroupItemText>Stocks</ListGroupItemText>
-                            <ListGroupItemText>Calendar</ListGroupItemText>
-                            <ListGroupItemText>Todo Lists</ListGroupItemText>
-                        </ListGroupItem>
+                        <ListGroup.Item>
+                            <ListGroup variant="flush">
+                                <ListGroup.Item><b>Displays</b></ListGroup.Item>
+                                <ListGroup.Item>Notes</ListGroup.Item>
+                                <ListGroup.Item>Weather</ListGroup.Item>
+                                <ListGroup.Item>Stocks</ListGroup.Item>
+                                <ListGroup.Item>Calendar</ListGroup.Item>
+                                <ListGroup.Item>Todo Lists</ListGroup.Item>
+                            </ListGroup>
+                        </ListGroup.Item>
                     </ListGroup>
                 </Col>
                 <Col sm="12" lg="6">
