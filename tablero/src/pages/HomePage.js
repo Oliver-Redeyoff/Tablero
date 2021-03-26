@@ -1,21 +1,23 @@
 import { Container, Row, Col, ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText} from "shards-react";
+import {Player, BigPlayButton} from 'video-react'
 import sushi from "../images/sushi-food.svg"
 import target from "../images/target.svg"
 import nggyu from "../images/nggyu.mp4"
+import ControlBar from "video-react/lib/components/control-bar/ControlBar";
 
 function HomePage() {
     return (
-        <Container>
-            <Row>
-                <Col>
+        <Container fluid>
+            <Row style={{height: "100%"}}>
+                <Col sm="12" lg="6" >
                     <img src={sushi} alt=""/>
                 </Col>
-                <Col> {/* TODO: Centre this with the image */}
+                <Col sm="12" lg="6"> {/* TODO: Centre this with the image */}
                     <p>Minimalist, modern and environmentally conscious</p>
                 </Col>
             </Row>
             <Row>
-                <Col>
+                <Col sm="12" lg="6">
                     <ListGroup>
                         <ListGroupItem>
                             <ListGroupItemHeading>Displays</ListGroupItemHeading>
@@ -27,12 +29,17 @@ function HomePage() {
                         </ListGroupItem>
                     </ListGroup>
                 </Col>
-                <Col>
+                <Col sm="12" lg="6">
                     <img src={target} alt=""/>
                 </Col>
             </Row>
-            <Row>
-                <video src={nggyu}></video>
+            <Row style={{paddingTop: "0.5rem", paddingBottom: "0.5rem"}}>
+                <Col>
+                    <Player src={nggyu} preload="auto">
+                        <BigPlayButton position="center" />
+                        <ControlBar autoHide={true} autoHideTime={500}/>
+                    </Player>
+                </Col>
             </Row>
             
         </Container>

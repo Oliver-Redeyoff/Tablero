@@ -14,13 +14,13 @@ function App() {
   return (
     <div>
       <Navbar
-        type="dark"
-        theme="primary"
+        type="light"
+        theme="light"
         >
         <NavbarBrand href="#">Tablero</NavbarBrand>
         {homePage ?
           <Nav navbar>
-            <Button onClick={() => setHomePage(!homePage)}>Get Started</Button>
+            <Button onClick={() => setHomePage(!homePage)} theme="secondary">Get Started</Button>
           </Nav> :
           <></>
         }
