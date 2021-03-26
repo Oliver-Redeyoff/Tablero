@@ -8,18 +8,21 @@ import {Player, BigPlayButton, ControlBar} from 'video-react'
 import sushi from "../images/sushi-food.svg"
 import target from "../images/target.svg"
 import nggyu from "../images/nggyu.mp4"
+import bg from "../images/front-page-bg.jpeg"
+import "../style.css"
 
 function HomePage() {
     return (
         <Container fluid>
-            <Row style={{height: "100%"}}>
-                <Col sm="12" lg="6" >
-                    <img src={sushi} alt=""/>
-                </Col>
-                <Col sm="12" lg="6"> {/* TODO: Centre this with the image */}
-                    <p>Minimalist, modern and environmentally conscious</p>
-                </Col>
-            </Row>
+            <div className="frontPage" style={{ backgroundImage: `url(${bg})` }}>
+                <div className="frontPageBgDarken"></div>
+                <h1 className="buzzwords">
+                    <h1 style={{borderRight: "10px solid rgb(255, 66, 49)"}}>Modern</h1>
+                    <h1 style={{borderRight: "10px solid rgb(244, 196, 95)"}}>Simple</h1>
+                    <h1 style={{borderRight: "10px solid rgb(99, 202, 183)"}}>Smart</h1>
+                </h1>
+            </div>
+            
             <Row>
                 <Col sm="12" lg="6">
                     <ListGroup>

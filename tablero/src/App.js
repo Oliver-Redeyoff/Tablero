@@ -5,6 +5,7 @@ import {
 } from "react-bootstrap"
 import HomePage from './pages/HomePage.js'
 import Editor from './pages/Editor.js'
+import logo from "./images/logo.svg"
 
 function App() {
   const [homePage, setHomePage] = useState(true)
@@ -13,12 +14,13 @@ function App() {
     <div>
       <Navbar
         variant="light"
-        bg="light"
+        style = {{backgroundColor: "transparent", zIndex: 2, padding: "30px", height: "140px"}}
       >
-        <Navbar.Brand href="#">Tablero</Navbar.Brand>
+        <Navbar.Brand href="#"><img src={logo} width="70px"></img></Navbar.Brand>
         {homePage ?
           <Navbar.Collapse className="justify-content-end">
             <Button 
+              style={{backgroundColor: 'rgb(255, 66, 49)', border: "none"}}
               className="justify-content-end" 
               onClick={() => setHomePage(!homePage)} 
               variant="secondary"
