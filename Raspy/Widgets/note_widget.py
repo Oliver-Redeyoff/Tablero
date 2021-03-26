@@ -3,13 +3,16 @@ import textwrap
 
 class widget:
 
-    def __init__(self, config, tileSize):
+    def __init__(self, config, tileSize, boardBgColor):
         self.config = config
         self.tileSize = tileSize
+        self.boardBgColor = boardBgColor
         print('note widget initialised')
 
     def render(self):
-        print('rendering note')
+        print('rendering note widget')
+
+        # set all required variables
         bg_color = 255 if self.config['config']['colorMode']=='light' else 0
         text_color = 0 if self.config['config']['colorMode']=='light' else 255
 
@@ -21,11 +24,18 @@ class widget:
         title_font = ImageFont.load_default()
         content_font = ImageFont.truetype('OpenSans.ttf', 16)
         
-        widget_draw.rectangle(xy=[(0, 0), (widget_width, widget_height)], outline=0, width= 5)
+        # draw frame
+        widget_draw.rectangle(
+            xy = [(0, 0), (widget_width, widget_height)], 
+            outline = (255-bg_color if self.boardBgColor==self.config['config']['colorMode'] else bg_color), 
+            width = 5
+        )
 
+        # draw widget title
         widget_draw.text(xy=(10, 10), text='note', font=title_font, fill=text_color)
 
-        note_lines = textwrap.wrap(self.config['config']['text'], width=round(widget_width* 0.1))
+        # draw note
+        note_lines = textwrap.wrap(self.config['config']['text'], width=round(widget_width* 0.12))
         y_text = 30
         for line in note_lines:
             width, height = content_font.getsize(line)

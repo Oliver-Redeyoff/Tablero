@@ -4,10 +4,11 @@ import requests
 
 class widget:
 
-    def __init__(self, config, tileSize):
+    def __init__(self, config, tileSize, boardBgColor):
         self.config = config
         self.tileSize = tileSize
-        print('todo widget initialised')
+        self.boardBgColor = boardBgColor
+        print('news widget initialised')
 
     def getNews(self):
         url = "https://newsapi.org/v2/top-headlines?"
@@ -16,19 +17,15 @@ class widget:
         url += "&apiKey=72d48922d4644d03bcda247a8ba59479"
 
         response = requests.get(url)
-        print("got news")
         data = response.json()
-
-        articles = []
-        for article in data['articles']:
-            articles.append(article['title'])
         
         return data['articles']
 
     def render(self):
-        print('rendering note')
+        print('rendering news widget')
+
+        # set all required variables
         newsData = self.getNews()
-        print(newsData)
 
         bg_color = 255 if self.config['config']['colorMode']=='light' else 0
         text_color = 0 if self.config['config']['colorMode']=='light' else 255
@@ -39,29 +36,35 @@ class widget:
         widget_img = Image.new(mode='1', size=(widget_width, widget_height), color=bg_color)
         widget_draw = ImageDraw.Draw(widget_img)
         title_font = ImageFont.load_default()
-        content_font = ImageFont.truetype('OpenSans.ttf', 16)
+        content_font = ImageFont.truetype('OpenSans.ttf', 14)
+        news_title_font = ImageFont.truetype('OpenSans.ttf', 10)
         
-        widget_draw.rectangle(xy=[(0, 0), (widget_width, widget_height)], outline=0, width= 5)
+        # draw frame
+        widget_draw.rectangle(
+            xy = [(0, 0), (widget_width, widget_height)], 
+            outline = (255-bg_color if self.boardBgColor==self.config['config']['colorMode'] else bg_color), 
+            width = 5
+        )
 
+        # draw widget title
         widget_draw.text(xy=(10, 10), text='news', font=title_font, fill=text_color)
 
+        # draw news
         x = 20
         y = 30
         for article in newsData:
             source = article['source']['name']
             sourceSize = content_font.getsize(source)
             widget_draw.rectangle(xy=[(x-5, y), (x+sourceSize[0]+5, y+25)], fill= text_color)
-            widget_draw.text(xy=(x, y), text=source, font=content_font, fill=bg_color)
+            widget_draw.text(xy=(x, y+2), text=source, font=content_font, fill=bg_color)
 
             title = article['title']
-            note_lines = textwrap.wrap(title, width=round(widget_width* 0.12))
+            note_lines = textwrap.wrap(title, width=round((widget_width-sourceSize[0]+10) * 0.17))
             y_text = y
             for line in note_lines:
-                widget_draw.text(xy=(x+sourceSize[0]+10, y_text), text=line, font=title_font, fill=text_color)
+                widget_draw.text(xy=(x+sourceSize[0]+10, y_text-2), text=line, font=news_title_font, fill=text_color)
                 y_text += 15
-            #widget_draw.text(xy=(x+sourceSize[0]+10, y), text=article['title'], font=title_font, fill=text_color)
 
             y += 40
         
-
         return widget_img

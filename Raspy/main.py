@@ -22,12 +22,15 @@ bgColor = 'white'
 refreshFrequency = 10
 gridTileSize = 100
 
+
 async def init():
     while True:
         await cycle()
         time.sleep(refreshFrequency)
 
+
 async def cycle():
+    # set default global vars
     global epd, refreshFrequency, gridTileSize, grid, bgColor
     grid = []
     bgColor = 'white'
@@ -44,19 +47,16 @@ async def cycle():
     # init all the widgets that are in the current grid
     init_widgets()
 
-    # schedule job per widget for refreshing their data
-
-    # schedule a job for refreshing the screen
+    # draw the board
     draw_board()
 
 
 def init_widgets():
-    global gridTileSize, grid
+    global bgColor, gridTileSize, grid
 
     for widget in grid:
-        widget['ref'] = widgetLoader.getWidgeRef(widget['id'], widget, gridTileSize)
-    
-    print(grid)
+        widget['ref'] = widgetLoader.getWidgeRef(widget['id'], widget, gridTileSize, bgColor)
+
 
 def draw_board():
     global epd, bgColor, gridTileSize, grid
@@ -81,7 +81,3 @@ def draw_board():
 
 if __name__ == '__main__':
     asyncio.run(init())
-    #schedule.every(refreshFrequency).seconds.do(asyncio.run(init()))
-    #while True:
-    #    schedule.run_pending()
-    #    time.sleep(1)

@@ -4,9 +4,10 @@ from io import BytesIO
 
 class widget:
 
-    def __init__(self, config, tileSize):
+    def __init__(self, config, tileSize, boardBgColor):
         self.config = config
         self.tileSize = tileSize
+        self.boardBgColor = boardBgColor
         print('weather widget initialised')
 
     def getWeather(self):
@@ -15,9 +16,7 @@ class widget:
         weatherUrl += "&appid=b1fef35e73e92d824c8b42ea70b5e913"
 
         response = requests.get(weatherUrl)
-        print("got weather")
         weatherData = response.json()
-        # weatherStr = "Weather in Deal : " + weatherData['weather'][0]['main']
         temp = round(float(weatherData['main']['temp']) - 273.15)
 
         iconResponse = requests.get("http://openweathermap.org/img/wn/" + weatherData['weather'][0]['icon'] + ".png")
@@ -26,7 +25,9 @@ class widget:
         return {"icon": weatherIcon, "temp": temp}
 
     def render(self):
-        print('rendering weather')
+        print('rendering weather widget')
+
+        # set all required variables
         weatherData = self.getWeather()
 
         bg_color = 255 if self.config['config']['colorMode']=='light' else 0
@@ -40,10 +41,17 @@ class widget:
         title_font = ImageFont.load_default()
         content_font = ImageFont.truetype('OpenSans.ttf', 16)
         
-        widget_draw.rectangle(xy=[(0, 0), (widget_width, widget_height)], outline=0, width= 5)
+        # draw frame
+        widget_draw.rectangle(
+            xy = [(0, 0), (widget_width, widget_height)], 
+            outline = (255-bg_color if self.boardBgColor==self.config['config']['colorMode'] else bg_color), 
+            width = 5
+        )
 
+        # draw widget title
         widget_draw.text(xy=(10, 10), text='weather', font=title_font, fill=text_color)
 
+        # draw weather
         tempStr = str(weatherData['temp']) + " °C in " + self.config['config']['location']
         tempStrSize = content_font.getsize(tempStr)
 

@@ -5,13 +5,16 @@ import textwrap
 
 class widget:
 
-    def __init__(self, config, tileSize):
+    def __init__(self, config, tileSize, boardBgColor):
         self.config = config
         self.tileSize = tileSize
-        print('todo widget initialised')
+        self.boardBgColor = boardBgColor
+        print('calendar widget initialised')
 
     def render(self):
-        print('rendering note')
+        print('rendering calendar widget')
+
+        # set all required variables
         bg_color = 255 if self.config['config']['colorMode']=='light' else 0
         text_color = 0 if self.config['config']['colorMode']=='light' else 255
 
@@ -23,13 +26,19 @@ class widget:
         title_font = ImageFont.load_default()
         content_font = ImageFont.truetype('OpenSans.ttf', 14)
         
-        widget_draw.rectangle(xy=[(0, 0), (widget_width, widget_height)], outline=0, width= 5)
+        # draw frame
+        widget_draw.rectangle(
+            xy = [(0, 0), (widget_width, widget_height)], 
+            outline = (255-bg_color if self.boardBgColor==self.config['config']['colorMode'] else bg_color), 
+            width = 5
+        )
 
+        # draw widget title
         widget_draw.text(xy=(10, 10), text='calendar', font=title_font, fill=text_color)
 
+        # draw calendar
         today = datetime.now()
         monthRange = monthrange(today.year, today.month)
-        print(today.day)
         dateYearSize = content_font.getsize(today.strftime("%B %Y"))
         widget_draw.text(xy=(widget_width/2 - dateYearSize[0]/2, 10), text=today.strftime("%B %Y"), font=content_font, fill=text_color)
 
@@ -50,5 +59,4 @@ class widget:
                 x = intial_x
                 y += dateCubeHeight
             
-
         return widget_img
