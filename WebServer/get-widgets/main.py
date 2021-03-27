@@ -7,14 +7,14 @@ def get_config(request):
     Returns:
         The response text or any set of values that can be turned into a
         Response object using
-        `make_response <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>`.
+        `make_response <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>`
     """
     if request.method == 'OPTIONS':
         # Allows GET requests from any origin with the Content-Type
         # header and caches preflight response for an 3600s
         headers = {
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Methods': 'GET',
             'Access-Control-Allow-Headers': 'Content-Type',
             'Access-Control-Max-Age': '3600'
         }
@@ -26,22 +26,10 @@ def get_config(request):
         'Access-Control-Allow-Origin': '*'
     }
 
-    # Check the keys
-    request_json = request.get_json()
-
-    if not all(i in list(request_json.keys()) for i in ['user_id', 'secret']):
-      return {'error': 'missing-keys'}
-
     # Check the auth
     firestore_client = firestore.Client()
-    user_ref = firestore_client.collection('users').document(request_json['user_id']).get()
-    if not user_ref.exists:
-      return {'error': 'invalid-user-id'}
+    widget_docs = firestore_client.collection('widgets').stream()
+    
+    widget_dicts = [{widget_doc.id: widget_doc.to_dict()} for widget_doc in widget_docs]
 
-    user_data = user_ref.to_dict()
-
-    if user_data.get('secret') != request_json['secret']:
-      return {'error': 'invalid-secret'}
-
-    user_data.pop('secret')
-    return (user_data, 200, headers)
+    return ({'widgets': widget_dicts}, 200, headers)

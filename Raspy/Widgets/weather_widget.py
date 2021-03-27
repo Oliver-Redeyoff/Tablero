@@ -1,14 +1,12 @@
-from PIL import Image,ImageDraw,ImageFont
+from PIL import Image
 import requests
 from io import BytesIO
 
-class widget:
+import requests
 
-    def __init__(self, config, tileSize, boardBgColor):
-        self.config = config
-        self.tileSize = tileSize
-        self.boardBgColor = boardBgColor
-        print('weather widget initialised')
+from .widget import Widget
+
+class WeatherWidget(Widget):
 
     def getWeather(self):
         weatherUrl = "http://api.openweathermap.org/data/2.5/weather?"
@@ -30,33 +28,15 @@ class widget:
         # set all required variables
         weatherData = self.getWeather()
 
-        bg_color = 255 if self.config['config']['colorMode']=='light' else 0
-        text_color = 0 if self.config['config']['colorMode']=='light' else 255
-
-        widget_width = self.tileSize*self.config['width'] - 10
-        widget_height = self.tileSize*self.config['height'] - 10
-
-        widget_img = Image.new(mode='1', size=(widget_width, widget_height), color=bg_color)
-        widget_draw = ImageDraw.Draw(widget_img)
-        title_font = ImageFont.load_default()
-        content_font = ImageFont.truetype('OpenSans.ttf', 16)
-        
-        # draw frame
-        widget_draw.rectangle(
-            xy = [(0, 0), (widget_width, widget_height)], 
-            outline = (255-bg_color if self.boardBgColor==self.config['config']['colorMode'] else bg_color), 
-            width = 5
-        )
-
-        # draw widget title
-        widget_draw.text(xy=(10, 10), text='weather', font=title_font, fill=text_color)
+        self.create_image(font_size=16)
+        self.draw_skeleton_image('weather')
 
         # draw weather
         tempStr = str(weatherData['temp']) + " °C in " + self.config['config']['location']
-        tempStrSize = content_font.getsize(tempStr)
+        tempStrSize = self._content_font.getsize(tempStr)
 
-        widget_draw.text(xy=(widget_width/2 - tempStrSize[0]/2, widget_height-40), text=tempStr, font=content_font, fill=text_color)
-        weatherIcon = weatherData['icon'].resize((widget_width, widget_height))
-        widget_draw.bitmap((0, -5), weatherIcon)
+        self._widget_draw.text(xy=(self.widget_width/2 - tempStrSize[0]/2, self.widget_height-40), text=tempStr, font=self._content_font, fill=self.widget_text_color)
+        weatherIcon = weatherData['icon'].resize((self.widget_width, self.widget_height))
+        self._widget_draw.bitmap((0, -5), weatherIcon)
 
-        return widget_img
+        return self._widget_img
