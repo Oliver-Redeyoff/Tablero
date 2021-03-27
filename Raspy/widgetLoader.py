@@ -1,15 +1,17 @@
-import Widgets.note_widget as note_widget
-import Widgets.weather_widget as weather_widget
-import Widgets.todo_widget as todo_widget
-import Widgets.picture_widget as picture_widget
-import Widgets.calendar_widget as calendar_widget
-import Widgets.news_widget as news_widget
+from Widgets.note_widget import NoteWidget
+from Widgets.weather_widget import WeatherWidget
+from Widgets.todo_widget import TodoWidget
+from Widgets.picture_widget import PictureWidget
+from Widgets.calendar_widget import CalendarWidget
+from Widgets.news_widget import NewsWidget
 
+# TODO Factory + dictionary
 def getWidgeRef(id, widgetData, tileSize, boardBgColor):
-    if id == 0: return note_widget.widget(widgetData, tileSize, boardBgColor)
-    if id == 1: return weather_widget.widget(widgetData, tileSize, boardBgColor)
-    if id == 2: return todo_widget.widget(widgetData, tileSize, boardBgColor)
-    if id == 3: return picture_widget.widget(widgetData, tileSize, boardBgColor)
-    if id == 4: return calendar_widget.widget(widgetData, tileSize, boardBgColor)
-    if id == 5: return news_widget.widget(widgetData, tileSize, boardBgColor)
-    else : pass
+    if id == 0: return NoteWidget(widgetData, tileSize, boardBgColor)
+    if id == 1: return WeatherWidget(widgetData, tileSize, boardBgColor)
+    if id == 2: return TodoWidget(widgetData, tileSize, boardBgColor)
+    if id == 3: return PictureWidget(widgetData, tileSize, boardBgColor)
+    if id == 4: return CalendarWidget(widgetData, tileSize, boardBgColor)
+    if id == 5: return NewsWidget(widgetData, tileSize, boardBgColor)
+
+    raise ValueError(f'Widget id: {id} is invalid')
