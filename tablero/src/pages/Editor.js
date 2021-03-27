@@ -193,18 +193,33 @@ function Editor() {
             </Modal>
 
             <DndProvider backend={HTML5Backend}>
-                <Container style={{paddingTop: "1rem"}}>
-                    <Row style={{paddingBottom: "1rem"}}><Button onClick={saveGrid} variant="secondary">Save Grid</Button></Row>
-                    <Row>
-                        <Col sm="12" lg="6" >
-                            <Grid 
-                                gridWidgets={gridWidgets} 
-                                changeGridWidgets={changeGridWidgets}
-                            />
+                <Container style={{marginTop: "60px", maxWidth: "1250px"}}>
+                    <Row style={{backgroundColor: "rgba(100, 100, 100, 0.1)", padding: "40px 0px", marginBottom: "50px"}}>
+                        <Col sm="12" lg="5" style={{
+                            height: "1000px", 
+                            backgroundColor: "rgba(212, 204, 188)", 
+                            marginLeft: 100/24 + "%",
+                            marginRight: 100/12 + "%"
+                        }}>
+                            <div style={{
+                                position: "absolute",
+                                top: "15px",
+                                left: "15px",
+                                width: "calc(100% - 30px)",
+                                height: "calc(100% - 30px"
+                            }}>
+                                <Grid 
+                                    gridWidgets={gridWidgets} 
+                                    changeGridWidgets={changeGridWidgets}
+                                />
+                            </div>
                         </Col>
-                        <Col sm="12" lg="6" >
+                        <Col sm="12" lg="5">
                             <ControlPanel widgets={widgets} config={config} triggerGetConfig={triggerGetConfig}/>
                         </Col>
+                    </Row>
+                    <Row style={{marginBottom: "100px"}}>
+                        <Button onClick={saveGrid} variant="primary" style={{display: "block", margin: "0px auto", width: "250px"}}>Save Grid</Button>
                     </Row>
                 </Container>
             </DndProvider>
@@ -264,6 +279,7 @@ function GridTile({position, changeGridWidgets}) {
 }
 
 function GridWidget({widget}) {
+
     // Widget overlayed on top of GridTile
     const size = widget.size
     
@@ -276,8 +292,21 @@ function GridWidget({widget}) {
             top: widget.y*100/5 + "%",
             padding: "10px"
         }}>
-            <div style={{backgroundColor: "rgba(0, 0, 0)", height: "100%", width: "100%"}}>
-                <p style={{color: "white"}}>{widget.title}</p>
+            <div style={{
+                backgroundColor: "rgba(30, 18, 26)", 
+                width: "100%", 
+                height: "100%",
+                padding: "10px"}}>
+                <p style={{color: "white", fontSize: "12px"}}>{widget.title}</p>
+                <img src={widget.iconURL} style={{
+                    position: "absolute",
+                    maxWidth: "50%",
+                    maxHeight: "50%",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translateX(-50%) translateY(-50%)",
+                    filter: "brightness(0) invert(1)"
+                }}/>
             </div>
         </div>
     )
@@ -307,8 +336,6 @@ function Widgets({widgets}) {
 }
 
 function Widget({widgetInfo}) {
-
-    console.log(widgetInfo)
 
     const [_, drag] = useDrag(() => ({
         type: WidgetDragTypes.WIDGET,

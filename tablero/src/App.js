@@ -35,9 +35,15 @@ function App() {
               onClick={() => setHomePage(!homePage)} 
               variant="secondary"
             >
-              Get Started
+              Go to dashboard
             </Button></Navbar.Collapse>:
-          <></>
+          <h1 class="fadeIn" style={{
+            position: "absolute", 
+            left: "50%", 
+            transform: "translateX(-50%)",
+            fontWeight: "600",
+            color: "rgb(20, 20, 20)"
+          }}>Dashboad</h1>
         }
       </Navbar>
       {homePage ? <HomePage /> : <Editor />}
