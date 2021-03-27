@@ -44,6 +44,9 @@ function Editor() {
     
     // Calls get-config endpoint
     useEffect(() => {
+        if (!userLoggedIn) {
+            return
+        }
         fetch(API_URL + '/get-config', {
             method: 'POST',
             headers: {
@@ -61,9 +64,9 @@ function Editor() {
             }
             if (json.grid != null) {
                 changeGridWidgets(json.grid.map((item) => {
-                    const parent = widgets[item.id]
-                    if (parent != null) {
-                        const fullWidget = {...item, ...cloneDeep(parent)}
+                    const parents = widgets.filter(ele => ele.id == item.id)
+                    if (parents.length > 0) {
+                        const fullWidget = {...item, ...cloneDeep(parents[0])}
                         return fullWidget
                     }
                     return null
@@ -71,7 +74,7 @@ function Editor() {
                 }).filter(ele => ele != null))
             }
         }).catch(e => {console.warn(e)})
-    }, [widgets, getConfigTrigger, changeUserLoggedIn])
+    }, [widgets, getConfigTrigger, userLoggedIn])
 
     // Calls get-widgets endpoint
     useEffect(() => {
@@ -131,7 +134,27 @@ function Editor() {
             })
         }
     
-
+    
+    const saveGrid = () => {
+        const to_send = {
+            'user_id': deviceName,
+            'secret': secret,
+            'grid': gridWidgets
+        }
+        fetch(API_URL+'/set-grid', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(to_send)
+        }).then((resp) => resp.json()).then((json) => {
+            if (json.success === true) {
+                triggerGetConfig((current) => !current)
+            } else {
+                console.warn('Couldn\'t save config')
+            }
+        }).catch((err) => {console.warn(err)})
+    }
     return (
         <>
             <Modal
@@ -170,6 +193,7 @@ function Editor() {
 
             <DndProvider backend={HTML5Backend}>
                 <Container style={{paddingTop: "1rem"}}>
+                    <Row style={{paddingBottom: "1rem"}}><Button onClick={saveGrid} variant="secondary">Save Grid</Button></Row>
                     <Row>
                         <Col sm="12" lg="6" >
                             <Grid 
