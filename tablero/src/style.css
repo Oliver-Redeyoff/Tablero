@@ -12,6 +12,7 @@
     animation-name: fadeIn;
     animation-duration: 1;
     animation-duration: 1s;
+    animation-fill-mode: backwards;
 }
 
 .frontPage {
