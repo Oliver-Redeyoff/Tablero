@@ -34,6 +34,8 @@ function Editor() {
     const [gridWidgets, changeGridWidgets] = useState([])
     const [widgets, updateWidgets] = useState([])
     const [config, setConfig] = useState({})
+
+    const [getConfigTrigger, triggerGetConfig] = useState(false)
     
     // Calls get-config endpoint
     useEffect(() => {
@@ -64,7 +66,7 @@ function Editor() {
                 }).filter(ele => ele != null))
             }
         }).catch(e => {console.warn(e)})
-    }, [widgets])
+    }, [widgets, getConfigTrigger])
 
     // Calls get-widgets endpoint
     useEffect(() => {
@@ -117,7 +119,7 @@ function Editor() {
                         />
                     </Col>
                     <Col sm="12" lg="6" >
-                        <ControlPanel widgets={widgets}/>
+                        <ControlPanel widgets={widgets} config={config} triggerGetConfig={triggerGetConfig}/>
                     </Col>
                 </Row>
             </Container>
@@ -134,7 +136,7 @@ function Grid({gridWidgets, changeGridWidgets}) {
     const gridTiles = [];
     for(let i=0 ; i<width*height ; i++) {
         const position = [i%width, Math.floor(i/width)]
-        gridTiles.push(<GridTile position={position} changeGridWidgets={changeGridWidgets}/>)
+        gridTiles.push(<GridTile key={i} position={position} changeGridWidgets={changeGridWidgets}/>)
     }
     
     return (
@@ -147,7 +149,7 @@ function Grid({gridWidgets, changeGridWidgets}) {
             border: "1px solid red"
         }}>
             {gridTiles.map((gridTile) => gridTile)}
-            {gridWidgets.map((gridWidget) => <GridWidget widget={gridWidget} />)}
+            {gridWidgets.map((gridWidget, index) => <GridWidget key={index} widget={gridWidget} />)}
         </div>
     )
 }
@@ -197,7 +199,7 @@ function GridWidget({widget}) {
     )
 }
 
-function ControlPanel({widgets}) {
+function ControlPanel({widgets, config, triggerGetConfig}) {
 
     return (
         <Tabs style={{maxWidth: "10.84rem"}}>
@@ -205,7 +207,7 @@ function ControlPanel({widgets}) {
                 <Widgets widgets={widgets} />
             </Tab>
             <Tab title="Config" eventKey="config">
-                <Config />
+                <Config config={config} triggerGetConfig={triggerGetConfig}/>
             </Tab>
         </Tabs>
     )
@@ -215,7 +217,7 @@ function Widgets({widgets}) {
     
     return (
         <CardColumns style={{paddingTop: "1rem"}}>
-            {Object.values(widgets).map(e => <Widget widgetInfo={e} />)}
+            {Object.values(widgets).map((ele, index) => <Widget key={index} widgetInfo={ele} />)}
         </CardColumns>
     )
 }
@@ -238,33 +240,52 @@ function Widget({widgetInfo}) {
     )
 }
 
-function Config() {
-    const initialRefreshRate = 20
-    const [selectedTheme, changeSelectedTheme] = useState("light")
-    const [themeChanged, toggleThemeChanged] = useState(false)
-    
+function Config({config, triggerGetConfig}) {
+    const initialTheme = config.bgColor != null ? config.bgColor : "light"
+    const initialRefreshRate = config.refreshFrequency != null ? config.refreshFrequency : 20
+
+    const [selectedTheme, changeSelectedTheme] = useState(initialTheme)
     const [refreshRate, changeRefreshRate] = useState(initialRefreshRate)
 
-    const changeTheme = (theme) => {
-        changeSelectedTheme(theme)
-        toggleThemeChanged(!themeChanged)
-    }
+    const handleSaveChanges = (event) => {
+        event.preventDefault()
+        fetch(API_URL+'/set-config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'user_id': 'test-new-data',
+                'secret': 'password',
+                'config': {
+                    'refreshFrequency': refreshRate,
+                    'bgColor': selectedTheme
+                }
+            })
+        }).then(resp => resp.json()).then((json) => {
+            if (json.success !== true) {
+                console.warn('Save did not succeed')
+            } else {
+                triggerGetConfig((current) => !current)
+            }
+        }).catch((err) => {console.warn(err)})
+    };
 
     return (
-        <Form className="mb-3" style={{paddingTop: "1rem"}} onSubmit={(event) => {event.preventDefault()}}>
+        <Form className="mb-3" style={{paddingTop: "1rem"}} onSubmit={(e) => {e.preventDefault()}}>
             <Form.Group>
                 <Form.Label>Device theme:</Form.Label>
                 <Button 
                     variant={selectedTheme == "light" ? "secondary" : "outline-secondary"} 
                     style={{margin: "0.5rem"}}
-                    onClick={() => changeTheme("light")}
+                    onClick={() => changeSelectedTheme("light")}
                 >
                     Light
                 </Button>
                 <Button 
                     variant={selectedTheme == "dark" ? "secondary" : "outline-secondary"} 
                     style={{margin: "0.5rem"}}
-                    onClick={() => changeTheme("dark")}
+                    onClick={() => changeSelectedTheme("dark")}
                 >
                     Dark
                 </Button>
@@ -278,8 +299,8 @@ function Config() {
                     onChange={(event) => changeRefreshRate(event.target.value)}
                 />
             </Form.Group>
-            {themeChanged || refreshRate != initialRefreshRate ? 
-                <Button variant="secondary" type="submit">Save changes</Button> : 
+            {initialTheme != selectedTheme || refreshRate != initialRefreshRate ? 
+                <Button variant="secondary" type="submit" onClick={handleSaveChanges}>Save changes</Button> : 
             <></>}
         </Form>
     )
