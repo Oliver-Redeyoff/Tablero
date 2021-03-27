@@ -15,6 +15,7 @@ import { DndProvider, useDrag, useDrop } from "react-dnd"
 import {HTML5Backend} from "react-dnd-html5-backend"
 import {cloneDeep} from "lodash";
 import sushi from "../images/sushi-food.svg"
+import calendar from "../images/calendarIcon.png"
 
 const WidgetDragTypes = {
     WIDGET: 'widget'
@@ -110,9 +111,9 @@ function Editor() {
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <Container style={{paddingTop: "1rem"}}>
+            <Container style={{marginTop: "80px"}}>
                 <Row>
-                    <Col sm="12" lg="6" >
+                    <Col sm="12" lg="6" style={{height: "800px"}}>
                         <Grid 
                             gridWidgets={gridWidgets} 
                             changeGridWidgets={changeGridWidgets}
@@ -145,8 +146,7 @@ function Grid({gridWidgets, changeGridWidgets}) {
             top: "0px",
             left: "0px",
             width: "100%",
-            height: "100%",
-            border: "1px solid red"
+            height: "100%"
         }}>
             {gridTiles.map((gridTile) => gridTile)}
             {gridWidgets.map((gridWidget, index) => <GridWidget key={index} widget={gridWidget} />)}
@@ -202,7 +202,7 @@ function GridWidget({widget}) {
 function ControlPanel({widgets, config, triggerGetConfig}) {
 
     return (
-        <Tabs style={{maxWidth: "10.84rem"}}>
+        <Tabs>
             <Tab title="Widgets" eventKey="widgets" >
                 <Widgets widgets={widgets} />
             </Tab>
@@ -224,6 +224,8 @@ function Widgets({widgets}) {
 
 function Widget({widgetInfo}) {
 
+    console.log(widgetInfo)
+
     const [_, drag] = useDrag(() => ({
         type: WidgetDragTypes.WIDGET,
         item: widgetInfo,
@@ -231,7 +233,7 @@ function Widget({widgetInfo}) {
     
     return (
         <Card ref={drag}>
-            <Card.Img variant="top" src={sushi} style={{pointerEvents: "none"}} />
+            <Card.Img variant="top" src={widgetInfo.iconURL} style={{pointerEvents: "none"}} />
             <Card.Body>
                 <Card.Title>{widgetInfo?.title}</Card.Title>
                 {widgetInfo?.description != null ? <Card.Text>{widgetInfo.description}</Card.Text> : <></>}

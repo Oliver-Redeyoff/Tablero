@@ -12,11 +12,21 @@ function App() {
 
   return (
     <div>
-      <Navbar
+      <Navbar className="fadeIn"
         variant="light"
-        style = {{backgroundColor: "transparent", zIndex: 2, padding: "30px", height: "140px"}}
+        style = {{
+          position: "relative", 
+          backgroundColor: homePage ? "transparent" : "rgba(0, 0, 0, 0.1)", 
+          zIndex: 2, 
+          padding: "30px", 
+          height: homePage ? "140px" : "80px",
+          transition: "all 0.2s"
+        }}
       >
-        <Navbar.Brand href="#"><img src={logo} width="70px"></img></Navbar.Brand>
+        <Navbar.Brand href="#"><img src={logo} style={{
+          height: homePage ? "100px" : "60px",
+          transition: "all 0.2s"
+        }}></img></Navbar.Brand>
         {homePage ?
           <Navbar.Collapse className="justify-content-end">
             <Button 
