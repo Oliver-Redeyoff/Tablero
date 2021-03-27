@@ -29,7 +29,7 @@ class widget:
         )
 
         # draw picture
-        picture = Image.open('child_criminal.bmp')
+        picture = Image.open('dog.bmp')
         picture = picture.resize((widget_width-10, widget_height-10))
         widget_img.paste(picture, (5, 5))
 
