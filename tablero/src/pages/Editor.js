@@ -238,6 +238,11 @@ function Grid({gridWidgets, changeGridWidgets}) {
         const position = [i%width, Math.floor(i/width)]
         gridTiles.push(<GridTile key={i} position={position} changeGridWidgets={changeGridWidgets}/>)
     }
+
+    const removeCallback = (index) => {
+        const copyWidgets = gridWidgets.filter((ele, eleIndex) => eleIndex != index)
+        changeGridWidgets(copyWidgets)
+    }
     
     return (
         <div style={{
@@ -248,7 +253,7 @@ function Grid({gridWidgets, changeGridWidgets}) {
             height: "100%"
         }}>
             {gridTiles.map((gridTile) => gridTile)}
-            {gridWidgets.map((gridWidget, index) => <GridWidget key={index} widget={gridWidget} />)}
+            {gridWidgets.map((gridWidget, index) => <GridWidget key={index} index={index} widget={gridWidget} removeCallback={removeCallback} />)}
         </div>
     )
 }
@@ -278,11 +283,14 @@ function GridTile({position, changeGridWidgets}) {
     )
 }
 
-function GridWidget({widget}) {
+
+function GridWidget({widget, index, removeCallback}) {
 
     // Widget overlayed on top of GridTile
     const size = widget.size
     
+    const removeWrapper = () => {removeCallback(index)}
+
     return (
         <div style={{
             position: "absolute",
@@ -292,12 +300,14 @@ function GridWidget({widget}) {
             top: widget.y*100/5 + "%",
             padding: "10px"
         }}>
+
             <div style={{
                 backgroundColor: "rgba(30, 18, 26)", 
                 width: "100%", 
                 height: "100%",
                 padding: "10px"}}>
                 <p style={{color: "white", fontSize: "12px"}}>{widget.title}</p>
+                <Button size="sm" style={{marginLeft: "0.5rem"}} variant="outline-light" onClick={removeWrapper}>x</Button>
                 <img src={widget.iconURL} style={{
                     position: "absolute",
                     maxWidth: "50%",
@@ -307,6 +317,7 @@ function GridWidget({widget}) {
                     transform: "translateX(-50%) translateY(-50%)",
                     filter: "brightness(0) invert(1)"
                 }}/>
+
             </div>
         </div>
     )
