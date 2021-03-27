@@ -38,7 +38,7 @@ function Editor() {
     const [config, setConfig] = useState({})
     const [getConfigTrigger, triggerGetConfig] = useState(false)
 
-
+    const [saving, changeSaving] = useState(false)
     const [userLoggedIn, changeUserLoggedIn] = useState(false)
     const [deviceName, updateDeviceName] = useState("")
     const [secret, updateSecret] = useState("")
@@ -137,6 +137,7 @@ function Editor() {
     
     
     const saveGrid = () => {
+        changeSaving(true)
         const to_send = {
             'user_id': deviceName,
             'secret': secret,
@@ -149,6 +150,7 @@ function Editor() {
             },
             body: JSON.stringify(to_send)
         }).then((resp) => resp.json()).then((json) => {
+            changeSaving(false)
             if (json.success === true) {
                 triggerGetConfig((current) => !current)
             } else {
@@ -158,6 +160,9 @@ function Editor() {
     }
     return (
         <>
+            { saving ? <div className="savingScreen">
+                <div className="loadingBox"></div>
+            </div> : <></> }
             <Modal
                 show={!userLoggedIn}
                 backdrop="static"
@@ -307,7 +312,19 @@ function GridWidget({widget, index, removeCallback}) {
                 height: "100%",
                 padding: "10px"}}>
                 <p style={{color: "white", fontSize: "12px"}}>{widget.title}</p>
-                <Button size="sm" style={{marginLeft: "0.5rem"}} variant="outline-light" onClick={removeWrapper}>x</Button>
+                <a size="sm" style={{
+                    position: "absolute",
+                    right: "20px",
+                    top: "20px",
+                    height: "25px",
+                    width: "25px",
+                    borderRadius: "5px",
+                    color: "white",
+                    border: "1px solid white",
+                    paddingTop: "0px",
+                    textAlign: "center",
+                    cursor: "pointer"
+                }} variant="outline-light" onClick={removeWrapper}>X</a>
                 <img src={widget.iconURL} style={{
                     position: "absolute",
                     maxWidth: "50%",

@@ -43,7 +43,7 @@ function App() {
             transform: "translateX(-50%)",
             fontWeight: "600",
             color: "rgb(20, 20, 20)"
-          }}>Dashboad</h1>
+          }}>Dashboard</h1>
         }
       </Navbar>
       {homePage ? <HomePage /> : <Editor />}
