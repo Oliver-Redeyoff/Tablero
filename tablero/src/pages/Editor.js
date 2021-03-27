@@ -10,6 +10,7 @@ import {
     Card,
     Button,
     Form,
+    Modal,
 } from "react-bootstrap";
 import { DndProvider, useDrag, useDrop } from "react-dnd"
 import {HTML5Backend} from "react-dnd-html5-backend"
@@ -35,19 +36,26 @@ function Editor() {
     const [gridWidgets, changeGridWidgets] = useState([])
     const [widgets, updateWidgets] = useState([])
     const [config, setConfig] = useState({})
-
     const [getConfigTrigger, triggerGetConfig] = useState(false)
+
+
+    const [userLoggedIn, changeUserLoggedIn] = useState(false)
+    const [deviceName, updateDeviceName] = useState("")
+    const [secret, updateSecret] = useState("")
     
     // Calls get-config endpoint
     useEffect(() => {
+        if (!userLoggedIn) {
+            return
+        }
         fetch(API_URL + '/get-config', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                'user_id': 'test-new-data',
-                'secret': 'password'
+                'user_id': deviceName,
+                'secret': secret
             })
         }).then((response) => 
             response.json()
@@ -57,9 +65,9 @@ function Editor() {
             }
             if (json.grid != null) {
                 changeGridWidgets(json.grid.map((item) => {
-                    const parent = widgets[item.id]
-                    if (parent != null) {
-                        const fullWidget = {...item, ...cloneDeep(parent)}
+                    const parents = widgets.filter(ele => ele.id == item.id)
+                    if (parents.length > 0) {
+                        const fullWidget = {...item, ...cloneDeep(parents[0])}
                         return fullWidget
                     }
                     return null
@@ -67,7 +75,7 @@ function Editor() {
                 }).filter(ele => ele != null))
             }
         }).catch(e => {console.warn(e)})
-    }, [widgets, getConfigTrigger])
+    }, [widgets, getConfigTrigger, userLoggedIn])
 
     // Calls get-widgets endpoint
     useEffect(() => {
@@ -109,22 +117,98 @@ function Editor() {
             }).catch(err => console.warn(err))
     }, [])
 
+
+    const handleLogin = () => {
+        fetch(API_URL+'/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'user_id': deviceName,
+                'secret': secret
+            })}).then((resp) => resp.json()).then((json) => {
+                if (json.success === true) {
+                    changeUserLoggedIn(true);
+
+                }
+            })
+        }
+    
+    
+    const saveGrid = () => {
+        const to_send = {
+            'user_id': deviceName,
+            'secret': secret,
+            'grid': gridWidgets
+        }
+        fetch(API_URL+'/set-grid', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(to_send)
+        }).then((resp) => resp.json()).then((json) => {
+            if (json.success === true) {
+                triggerGetConfig((current) => !current)
+            } else {
+                console.warn('Couldn\'t save config')
+            }
+        }).catch((err) => {console.warn(err)})
+    }
     return (
-        <DndProvider backend={HTML5Backend}>
-            <Container style={{marginTop: "80px"}}>
-                <Row>
-                    <Col sm="12" lg="6" style={{height: "800px"}}>
-                        <Grid 
-                            gridWidgets={gridWidgets} 
-                            changeGridWidgets={changeGridWidgets}
-                        />
-                    </Col>
-                    <Col sm="12" lg="6" >
-                        <ControlPanel widgets={widgets} config={config} triggerGetConfig={triggerGetConfig}/>
-                    </Col>
-                </Row>
-            </Container>
-        </DndProvider>
+        <>
+            <Modal
+                show={!userLoggedIn}
+                backdrop="static"
+                centered
+                keyboard={false}>
+
+                <Modal.Header>
+                    <Modal.Title>Sign In</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form onSubmit={(e) => {e.preventDefault()}}>
+                        <Form.Group>
+                            <Form.Label>Device name</Form.Label>
+                            <Form.Control 
+                                type="text" 
+                                value={deviceName}
+                                onChange={(event) => updateDeviceName(event.target.value)}
+                            />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Secret</Form.Label>
+                            <Form.Control 
+                                type="password" 
+                                value={secret}
+                                onChange={(event) => updateSecret(event.target.value)}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleLogin}>Sign in</Button>
+                </Modal.Footer>
+            </Modal>
+
+            <DndProvider backend={HTML5Backend}>
+                <Container style={{paddingTop: "1rem"}}>
+                    <Row style={{paddingBottom: "1rem"}}><Button onClick={saveGrid} variant="secondary">Save Grid</Button></Row>
+                    <Row>
+                        <Col sm="12" lg="6" >
+                            <Grid 
+                                gridWidgets={gridWidgets} 
+                                changeGridWidgets={changeGridWidgets}
+                            />
+                        </Col>
+                        <Col sm="12" lg="6" >
+                            <ControlPanel widgets={widgets} config={config} triggerGetConfig={triggerGetConfig}/>
+                        </Col>
+                    </Row>
+                </Container>
+            </DndProvider>
+        </>
     )
 }
 
