@@ -4,7 +4,8 @@ class Widget:
     def __init__(self, config, widget_size, tile_size, board_bg_color):
         self.config = config
         # Set colour settings
-        widget_color_mode = config.get('colorMode', 'light')
+        print(config)
+        widget_color_mode = config['config'].get('colorMode', 'light')
 
         if widget_color_mode == 'light':
             self.widget_bg_color = 255
