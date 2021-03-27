@@ -1,7 +1,7 @@
 from PIL import Image,ImageDraw,ImageFont
 
 class Widget:
-    def __init__(self, config, tile_size, board_bg_color):
+    def __init__(self, config, widget_size, tile_size, board_bg_color):
         self.config = config
         # Set colour settings
         widget_color_mode = config.get('colorMode', 'light')
@@ -18,8 +18,8 @@ class Widget:
         else:
             self.outline_color = self.widget_bg_color
         
-        self.widget_width = tile_size * config['width'] - 10
-        self.widget_height = tile_size * config['height'] - 10
+        self.widget_width = tile_size * widget_size['width'] - 10
+        self.widget_height = tile_size * widget_size['height'] - 10
 
         self._widget_img = None
         self._widget_draw = None

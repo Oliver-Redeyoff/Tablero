@@ -24,12 +24,14 @@ class Main:
 
         self.epd = epd7in5_V2.EPD()
         self.grid = []
-        self.board_bg_color_mode = 'white'
+        self.board_bg_color_mode = 'light'
         self.refresh_frequency = 10
         self.grid_tile_size = 100
 
         self._loop = asyncio.get_event_loop()
-        self._widget_factory = WidgetFactory()
+
+        widget_configs = self.get_widget_definitions()
+        self._widget_factory = WidgetFactory(widget_configs)
 
         self._loop.create_task(self.render_loop_task())
 
@@ -74,10 +76,10 @@ class Main:
     def get_board_config(self):
         try:
             resp = requests.post(
-                self.url, 
+                self.url+'get-config', 
                 json = {
-                    "user_id": "test-user",
-                    "secret": "password"
+                    "user_id": self.user_id,
+                    "secret": self.secret
                 }
             )
         except requests.exceptions.ConnectionError:
@@ -86,8 +88,23 @@ class Main:
 
         return resp.json()
 
+    def get_widget_definitions(self):
+        try:
+            resp = requests.get(self.url+'get-widgets')
+        except ConnectionError:
+            logger.critical('Could not connect to get-widget cloud function')
+            return {}
+
+        resp_json = resp.json()
+        
+        widget_configs = {}
+        for widget_config in resp_json['widgets']:
+            for key, value in widget_config.items():
+                widget_configs[key] = value
+
+        return widget_configs
 
 
 if __name__ == '__main__':
-    main = Main('https://europe-west2-la-hacks-308508.cloudfunctions.net/get-config', 'test-user', 'password')
+    main = Main('https://europe-west2-la-hacks-308508.cloudfunctions.net/', 'test-new-data', 'password')
     asyncio.get_event_loop().run_forever()
