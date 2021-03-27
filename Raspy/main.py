@@ -1,7 +1,5 @@
 import sys
 import os
-import time
-import json
 import asyncio
 import logging
 
@@ -47,6 +45,8 @@ class Main:
 
         except KeyError as key_error:
             logger.critical(f'Error occurred fetching config: {key_error}')
+            await asyncio.sleep(self.refresh_frequency)
+            self._loop.create_task(self.render_loop_task())
 
         for widget in self.grid:
             widget['ref'] = self._widget_factory.create_widget(widget['id'], widget, self.grid_tile_size, self.board_bg_color_mode)
@@ -72,13 +72,17 @@ class Main:
         self._loop.create_task(self.render_loop_task())
 
     def get_board_config(self):
-        resp = requests.post(
-            self.url, 
-            json = {
-                "user_id": "test-user",
-                "secret": "password"
-            }
-        )
+        try:
+            resp = requests.post(
+                self.url, 
+                json = {
+                    "user_id": "test-user",
+                    "secret": "password"
+                }
+            )
+        except requests.exceptions.ConnectionError:
+            logger.critical('Could not connect to get-config cloud function')
+            return {}
 
         return resp.json()
 
