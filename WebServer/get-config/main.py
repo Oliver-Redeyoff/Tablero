@@ -9,6 +9,23 @@ def get_config(request):
         Response object using
         `make_response <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>`.
     """
+    if request.method == 'OPTIONS':
+        # Allows GET requests from any origin with the Content-Type
+        # header and caches preflight response for an 3600s
+        headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Max-Age': '3600'
+        }
+
+        return ('', 204, headers)
+
+    # Set CORS headers for the main request
+    headers = {
+        'Access-Control-Allow-Origin': '*'
+    }
+
     # Check the keys
     request_json = request.get_json()
 
@@ -27,12 +44,4 @@ def get_config(request):
       return {'error': 'invalid-secret'}
 
     user_data.pop('secret')
-    # Check if config has changed
-    config_changed = user_data.get('config_flag', True)
-
-    # Return object
-    if config_changed:
-      # user_ref.set('config_flag', False)
-      return user_data
-
-    return user_data
+    return (user_data, 200, headers)
