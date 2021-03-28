@@ -6,7 +6,7 @@ import {
 } from "react-bootstrap";
 import {Player, BigPlayButton, ControlBar} from 'video-react'
 import promoVideo from "../images/Tablero.mp4"
-import bg from "../images/front-page-bg-2.jpeg"
+import bg from "../images/front-page-bg-2.jpg"
 import img from "../images/front-page-img-1.jpeg"
 import "../style.css"
 import "../reactVideo.css"
