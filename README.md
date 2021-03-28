@@ -1,6 +1,6 @@
 # Tablero - LA Hacks 2021
 
-***Devpost** [project](https://devpost.com/software/tablero)
+**Devpost** [project](https://devpost.com/software/tablero)  
 **Website** [website](oliver-redeyoff.github.io/tablero/)
 
 ## Overview
