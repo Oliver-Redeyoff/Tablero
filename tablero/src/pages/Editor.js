@@ -15,14 +15,13 @@ import {
 import { DndProvider, useDrag, useDrop } from "react-dnd"
 import {HTML5Backend} from "react-dnd-html5-backend"
 import {cloneDeep} from "lodash";
-import sushi from "../images/sushi-food.svg"
-import calendar from "../images/calendarIcon.png"
 
 const WidgetDragTypes = {
     WIDGET: 'widget'
 }
 
-const API_URL = 'https://europe-west2-la-hacks-308508.cloudfunctions.net' 
+const API_URL = 'https://europe-west2-la-hacks-308508.cloudfunctions.net'
+console.log("has loaded the api url")
 
 function createGridWidgetFromWidget(widget, location) {
     const copiedWidget = cloneDeep(widget);
@@ -264,7 +263,7 @@ function Grid({gridWidgets, changeGridWidgets}) {
 }
 
 function GridTile({position, changeGridWidgets}) {
-    // Droppable target in the Grid
+    
     const onDrop = (item) => {
         changeGridWidgets((current) => [...current, createGridWidgetFromWidget(item, position)])
     }
@@ -405,7 +404,8 @@ function Config({config, triggerGetConfig}) {
             })
         }).then(resp => resp.json()).then((json) => {
             if (json.success !== true) {
-                console.warn('Save did not succeed')
+                console.warn('Save did not succeed, there must be a problem somewhere')
+                console.log('you should look into this')
             } else {
                 triggerGetConfig((current) => !current)
             }
@@ -432,7 +432,7 @@ function Config({config, triggerGetConfig}) {
                 </Button>
             </Form.Group>
             <Form.Group>
-                <Form.Label>Screen refresh rate (seconds):</Form.Label>
+                <Form.Label>Screen refresh rate (in seconds):</Form.Label>
                 <Form.Control 
                     type="number" 
                     placeholder={initialRefreshRate} 

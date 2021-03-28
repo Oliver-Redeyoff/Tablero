@@ -5,12 +5,11 @@ import {
     ListGroup, 
 } from "react-bootstrap";
 import {Player, BigPlayButton, ControlBar} from 'video-react'
-import sushi from "../images/sushi-food.svg"
-import target from "../images/target.svg"
-import nggyu from "../images/nggyu.mp4"
+import promoVideo from "../images/Tablero.mp4"
 import bg from "../images/front-page-bg-2.jpeg"
 import img from "../images/front-page-img-1.jpeg"
 import "../style.css"
+import "../reactVideo.css"
 
 function HomePage() {
     return (
@@ -52,7 +51,7 @@ function HomePage() {
 
             <Row style={{padding: "50px 80px", marginTop: "40px"}}>
                 <Col>
-                    <Player src={nggyu} preload="auto">
+                    <Player src={promoVideo} preload="auto">
                         <BigPlayButton position="center" />
                         <ControlBar autoHide={true} autoHideTime={500}/>
                     </Player>

@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/Tablero/static/css/main.87002d47.chunk.css",
+    "main.js": "/Tablero/static/js/main.b685d982.chunk.js",
+    "main.js.map": "/Tablero/static/js/main.b685d982.chunk.js.map",
+    "runtime-main.js": "/Tablero/static/js/runtime-main.1a1f370c.js",
+    "runtime-main.js.map": "/Tablero/static/js/runtime-main.1a1f370c.js.map",
+    "static/css/2.fb7dbf56.chunk.css": "/Tablero/static/css/2.fb7dbf56.chunk.css",
+    "static/js/2.17935a3d.chunk.js": "/Tablero/static/js/2.17935a3d.chunk.js",
+    "static/js/2.17935a3d.chunk.js.map": "/Tablero/static/js/2.17935a3d.chunk.js.map",
+    "static/js/3.eab0bb85.chunk.js": "/Tablero/static/js/3.eab0bb85.chunk.js",
+    "static/js/3.eab0bb85.chunk.js.map": "/Tablero/static/js/3.eab0bb85.chunk.js.map",
+    "index.html": "/Tablero/index.html",
+    "static/css/2.fb7dbf56.chunk.css.map": "/Tablero/static/css/2.fb7dbf56.chunk.css.map",
+    "static/css/main.87002d47.chunk.css.map": "/Tablero/static/css/main.87002d47.chunk.css.map",
+    "static/js/2.17935a3d.chunk.js.LICENSE.txt": "/Tablero/static/js/2.17935a3d.chunk.js.LICENSE.txt",
+    "static/media/Tablero.6efcd9c3.mp4": "/Tablero/static/media/Tablero.6efcd9c3.mp4",
+    "static/media/front-page-bg-2.a748a82b.jpeg": "/Tablero/static/media/front-page-bg-2.a748a82b.jpeg",
+    "static/media/front-page-img-1.59b79111.jpeg": "/Tablero/static/media/front-page-img-1.59b79111.jpeg",
+    "static/media/logo.d09f2a62.svg": "/Tablero/static/media/logo.d09f2a62.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.1a1f370c.js",
+    "static/css/2.fb7dbf56.chunk.css",
+    "static/js/2.17935a3d.chunk.js",
+    "static/css/main.87002d47.chunk.css",
+    "static/js/main.b685d982.chunk.js"
+  ]
+}
