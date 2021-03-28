@@ -201,7 +201,7 @@ function Editor() {
                 </Modal.Body>
                 <Modal.Footer>
                     {failedLogin ? <Alert variant="danger">Login failed</Alert> : <></>}
-                    <Button variant="secondary" onClick={handleLogin}>Sign in</Button>
+                    <Button variant="primary" size="lg" onClick={handleLogin}>Sign in</Button>
                 </Modal.Footer>
             </Modal>
 
