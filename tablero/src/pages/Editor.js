@@ -15,8 +15,6 @@ import {
 import { DndProvider, useDrag, useDrop } from "react-dnd"
 import {HTML5Backend} from "react-dnd-html5-backend"
 import {cloneDeep} from "lodash";
-import sushi from "../images/sushi-food.svg"
-import calendar from "../images/calendarIcon.png"
 
 const WidgetDragTypes = {
     WIDGET: 'widget'
@@ -370,7 +368,24 @@ function GridWidget({widget, index, removeCallback, editCallback}) {
                     textAlign: "center",
                     cursor: "pointer"
                 }} variant="outline-light" onClick={removeWrapper}>X</a>
-                {widget.config != null ? <Button onClick={() => setModalOpen(true)}>Edit</Button> : <></>}
+
+                {widget.config != null ? 
+                <div style={{
+                    position: "absolute",
+                    bottom: "10px",
+                    right: "10px",
+                    padding: "5px 10px",
+                    borderTop: "2px solid white",
+                    borderLeft: "2px solid white",
+                    borderTopLeftRadius: "5px",
+                    backgroundColor: "white",
+                    color: "black",
+                    zIndex: "10",
+                    fontWeight: "600",
+                    cursor: "pointer"
+                }} onClick={() => setModalOpen(true)}>Edit</div> 
+                : <></>}
+                
                 <img src={widget.iconURL} style={{
                     position: "absolute",
                     maxWidth: "50%",
@@ -433,7 +448,7 @@ function GridWidgetFormItem({configKey, configValue, updateConfigValueCallback})
                         )
                     })}
                 </Container>
-                <Button onClick={() => {listUpdate(formValue.length, "")}}>+</Button>
+                <Button style={{marginLeft: "8px", marginTop: "30px"}} onClick={() => {listUpdate(formValue.length, "")}}>Add item</Button>
             </Form.Group>
         )
     }
