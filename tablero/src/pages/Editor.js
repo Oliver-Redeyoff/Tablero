@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react"
+import React, {useState, useEffect, useReducer} from "react"
 import { 
     Container, 
     Row, 
@@ -67,7 +67,7 @@ function Editor() {
                 changeGridWidgets(json.grid.map((item) => {
                     const parents = widgets.filter(ele => ele.id == item.id)
                     if (parents.length > 0) {
-                        const fullWidget = {...item, ...cloneDeep(parents[0])}
+                        const fullWidget = {...cloneDeep(parents[0]), ...item}
                         return fullWidget
                     }
                     return null
@@ -232,7 +232,6 @@ function Editor() {
     )
 }
 
-
 function Grid({gridWidgets, changeGridWidgets}) {
 
     const width = 3
@@ -248,6 +247,14 @@ function Grid({gridWidgets, changeGridWidgets}) {
         const copyWidgets = gridWidgets.filter((ele, eleIndex) => eleIndex != index)
         changeGridWidgets(copyWidgets)
     }
+
+    const editCallback = (index, newConfig) => {
+        const newWidget = cloneDeep(gridWidgets[index])
+        newWidget.config = newConfig
+        const copyWidgets = cloneDeep(gridWidgets)
+        copyWidgets[index] = newWidget
+        changeGridWidgets(copyWidgets)
+    }
     
     return (
         <div style={{
@@ -258,7 +265,13 @@ function Grid({gridWidgets, changeGridWidgets}) {
             height: "100%"
         }}>
             {gridTiles.map((gridTile) => gridTile)}
-            {gridWidgets.map((gridWidget, index) => <GridWidget key={index} index={index} widget={gridWidget} removeCallback={removeCallback} />)}
+            {gridWidgets.map((gridWidget, index) => <GridWidget 
+                                                        key={index} 
+                                                        index={index} 
+                                                        widget={gridWidget} 
+                                                        removeCallback={removeCallback} 
+                                                        editCallback={editCallback} 
+                                                    />)}
         </div>
     )
 }
@@ -289,12 +302,29 @@ function GridTile({position, changeGridWidgets}) {
 }
 
 
-function GridWidget({widget, index, removeCallback}) {
+function GridWidget({widget, index, removeCallback, editCallback}) {
 
     // Widget overlayed on top of GridTile
     const size = widget.size
-    
-    const removeWrapper = () => {removeCallback(index)}
+    const [modalOpen, setModalOpen] = useState(false)
+    const [configValue, updateConfigValue] = useState(cloneDeep(widget.config))
+
+    const removeWrapper = () => {
+        removeCallback(index)
+    }
+
+    const saveChanges = () => {
+        editCallback(index, configValue)
+        setModalOpen(false)
+    }
+
+    const updateConfigValueWrapper = (configKey, value) => {
+        updateConfigValue((current) => {
+            const old = cloneDeep(current)
+            old[configKey] = value
+            return old
+        })
+    }
 
     return (
         <div style={{
@@ -305,7 +335,22 @@ function GridWidget({widget, index, removeCallback}) {
             top: widget.y*100/5 + "%",
             padding: "10px"
         }}>
-
+            {widget.config != null ?
+            <Modal
+                show={modalOpen}
+            >
+                <Modal.Header>{widget.title}</Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        {Object.entries(configValue).map(([key, val]) => <GridWidgetFormItem key={key} configKey={key} configValue={val} updateConfigValueCallback={updateConfigValueWrapper}/>)}
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={saveChanges}>Confirm</Button>
+                    <Button onClick={() => {setModalOpen(false)}}>Cancel</Button>
+                </Modal.Footer>
+            </Modal> :
+            <></> }
             <div style={{
                 backgroundColor: "rgba(30, 18, 26)", 
                 width: "100%", 
@@ -325,6 +370,7 @@ function GridWidget({widget, index, removeCallback}) {
                     textAlign: "center",
                     cursor: "pointer"
                 }} variant="outline-light" onClick={removeWrapper}>X</a>
+                {widget.config != null ? <Button onClick={() => setModalOpen(true)}>Edit</Button> : <></>}
                 <img src={widget.iconURL} style={{
                     position: "absolute",
                     maxWidth: "50%",
@@ -337,6 +383,70 @@ function GridWidget({widget, index, removeCallback}) {
 
             </div>
         </div>
+    )
+}
+
+function GridWidgetFormItem({configKey, configValue, updateConfigValueCallback}) {
+
+    const [formValue, updateFormValue] = useState(cloneDeep(configValue)) // Deep copy?
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
+
+    const updateFormValueWrapper = (key, value) => {
+        updateFormValue(value)
+        updateConfigValueCallback(key, value)
+        forceUpdate()
+    }
+
+    const listUpdate = (index, value) => {
+        const newArray = cloneDeep(formValue)
+        if (index >= formValue.length) {
+            newArray.push("")
+        } else {
+            newArray[index] = value
+        }
+        updateFormValueWrapper(configKey, newArray)
+    }
+
+    const listRemove = (index) => {
+        const newArray = cloneDeep(formValue).filter((ele, ind) => ind != index)
+        updateFormValueWrapper(configKey, newArray)
+        
+    }
+    if (Array.isArray(formValue)) {
+        return (
+            <Form.Group>
+                <Form.Label>{configKey}</Form.Label>
+                <Container style={{margin: "0.5rem"}}>
+                    {formValue.map((val, ind) => {
+                        return (
+                            <Row>
+                                <Col>
+                                    <Row><GridWidgetFormItem 
+                                        key={val} 
+                                        configValue={val} 
+                                        configKey={ind} 
+                                        updateConfigValueCallback={listUpdate}
+                                    /></Row>
+                                    <Row><Button onClick={() => {listRemove(ind)}}>Remove</Button></Row>
+                                </Col>
+                            </Row>
+                        )
+                    })}
+                </Container>
+                <Button onClick={() => {listUpdate(formValue.length, "")}}>+</Button>
+            </Form.Group>
+        )
+    }
+
+    return (
+        <Form.Group>
+            <Form.Label>{configKey}</Form.Label>
+                <Form.Control 
+                    type="text" 
+                    value={formValue}
+                    onChange={(event) => updateFormValueWrapper(configKey, event.target.value)}
+                />
+        </Form.Group>
     )
 }
 
