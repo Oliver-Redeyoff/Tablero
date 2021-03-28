@@ -11,6 +11,7 @@ import {
     Button,
     Form,
     Modal,
+    Alert,
 } from "react-bootstrap";
 import { DndProvider, useDrag, useDrop } from "react-dnd"
 import {HTML5Backend} from "react-dnd-html5-backend"
@@ -39,6 +40,7 @@ function Editor() {
 
     const [saving, changeSaving] = useState(false)
     const [userLoggedIn, changeUserLoggedIn] = useState(false)
+    const [failedLogin, setFailedLogin] = useState(false)
     const [deviceName, updateDeviceName] = useState("")
     const [secret, updateSecret] = useState("")
     
@@ -129,8 +131,14 @@ function Editor() {
             })}).then((resp) => resp.json()).then((json) => {
                 if (json.success === true) {
                     changeUserLoggedIn(true);
-
+                } else {
+                    setFailedLogin(true)
+                    updateDeviceName("")
+                    updateSecret("")
                 }
+            }).catch((err) => {
+                setFailedLogin(true)
+                console.warn(err)
             })
         }
     
@@ -192,6 +200,7 @@ function Editor() {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
+                    {failedLogin ? <Alert variant="danger">Login failed</Alert> : <></>}
                     <Button variant="secondary" onClick={handleLogin}>Sign in</Button>
                 </Modal.Footer>
             </Modal>

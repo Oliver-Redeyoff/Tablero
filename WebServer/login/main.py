@@ -30,17 +30,17 @@ def login(request):
     request_json = request.get_json()
 
     if not all(i in list(request_json.keys()) for i in ['user_id', 'secret']):
-      return {'error': 'missing-keys'}
+      return ({'error': 'missing-keys'}, 200, headers)
 
     # Check the auth
     firestore_client = firestore.Client()
     user_ref = firestore_client.collection('users').document(request_json['user_id']).get()
     if not user_ref.exists:
-      return {'error': 'invalid-user-id'}
+      return ({'error': 'invalid-user-id'}, 200, headers)
 
     user_data = user_ref.to_dict()
 
     if user_data.get('secret') != request_json['secret']:
-      return {'error': 'invalid-secret'}
+      return ({'error': 'invalid-secret'}, 200, headers)
 
     return ({'success': True}, 200, headers)
