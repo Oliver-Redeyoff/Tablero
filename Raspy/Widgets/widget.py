@@ -5,7 +5,7 @@ class Widget:
         self.config = config
         # Set colour settings
         print(config)
-        widget_color_mode = config['config'].get('colorMode', 'light')
+        widget_color_mode = config.get('config', {}).get('colorMode', 'light')
 
         if widget_color_mode == 'light':
             self.widget_bg_color = 255
