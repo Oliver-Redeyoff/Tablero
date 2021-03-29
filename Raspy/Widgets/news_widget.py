@@ -1,9 +1,12 @@
 import textwrap
+import logging
 
 import requests
 from PIL import ImageFont
 
 from .widget import Widget
+
+logger = logging.getLogger(__name__)
 
 class NewsWidget(Widget):
 
@@ -15,6 +18,9 @@ class NewsWidget(Widget):
 
         response = requests.get(url)
         data = response.json()
+
+        if 'articles' not in data.keys():
+            raise ValueError(f'Articles was not in data for returned by newsapi')
         
         return data['articles']
 

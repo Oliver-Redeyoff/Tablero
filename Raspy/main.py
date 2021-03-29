@@ -35,20 +35,21 @@ class Main:
 
         self._loop.create_task(self.render_loop_task())
 
-
     async def render_loop_task(self):
         # get the latest config data from server
-        config = self.get_board_config()
         try:
+            config = self.get_board_config()
+
             self.grid = config['grid']
             self.board_bg_color_mode = config['config']['bgColor']
             self.refresh_frequency = config['config']['refreshFrequency']
             self.grid_tile_size = config['config']['gridTileSize']
 
-        except KeyError as key_error:
-            logger.critical(f'Error occurred fetching config: {key_error}')
+        except (KeyError, requests.exceptions.ConnectionError) as exception:
+            logger.critical(f'Error occurred fetching config: {exception}')
             await asyncio.sleep(self.refresh_frequency)
             self._loop.create_task(self.render_loop_task())
+            return
 
         for widget in self.grid:
             widget['ref'] = self._widget_factory.create_widget(widget['id'], widget, self.grid_tile_size, self.board_bg_color_mode)
@@ -62,7 +63,12 @@ class Main:
         
         # render all widgets
         for widget in self.grid:
-            img = widget['ref'].render()
+            try:
+                img = widget['ref'].render()
+            except Exception as e:
+                logger.error(f'Failed to render widget {widget["id"]} exception {e}')
+                continue
+
             board_img.paste(img, (self.grid_tile_size*widget['x']+5, self.grid_tile_size*widget['y']+5))
         
         # use this for dev
@@ -74,24 +80,20 @@ class Main:
         self._loop.create_task(self.render_loop_task())
 
     def get_board_config(self):
-        try:
-            resp = requests.post(
-                self.url+'get-config', 
-                json = {
-                    "user_id": self.user_id,
-                    "secret": self.secret
-                }
-            )
-        except requests.exceptions.ConnectionError:
-            logger.critical('Could not connect to get-config cloud function')
-            return {}
+        resp = requests.post(
+            self.url+'get-config', 
+            json = {
+                "user_id": self.user_id,
+                "secret": self.secret
+            }
+        )
 
         return resp.json()
 
     def get_widget_definitions(self):
         try:
             resp = requests.get(self.url+'get-widgets')
-        except ConnectionError:
+        except requests.exceptions.ConnectionError:
             logger.critical('Could not connect to get-widget cloud function')
             return {}
 
