@@ -15,6 +15,9 @@ class WeatherWidget(Widget):
 
         response = requests.get(weatherUrl)
         weatherData = response.json()
+        if 'main' not in weatherData.keys():
+            raise ValueError(f'main was not in returned data: {weatherData}')
+
         temp = round(float(weatherData['main']['temp']) - 273.15)
 
         iconResponse = requests.get("http://openweathermap.org/img/wn/" + weatherData['weather'][0]['icon'] + ".png")
