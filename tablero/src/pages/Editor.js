@@ -22,7 +22,6 @@ const WidgetDragTypes = {
 }
 
 const API_URL = 'https://europe-west2-la-hacks-308508.cloudfunctions.net'
-console.log("has loaded the api url")
 
 function createGridWidgetFromWidget(widget, location) {
     const copiedWidget = cloneDeep(widget);
@@ -413,23 +412,22 @@ function GridWidget({widget, index, removeCallback, editCallback}) {
 
 function GridWidgetFormItem({configKey, configValue, updateConfigValueCallback}) {
 
-    const [formValue, updateFormValue] = useState(cloneDeep(configValue)) // Deep copy?
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
+    const [formValue, updateFormValue] = useState(cloneDeep(configValue))
 
     const updateFormValueWrapper = (key, value) => {
         updateFormValue(value)
         updateConfigValueCallback(key, value)
-        forceUpdate()
     }
 
     const listUpdate = (index, value) => {
-        const newArray = cloneDeep(formValue)
         if (index >= formValue.length) {
+            const newArray = cloneDeep(formValue)
             newArray.push("")
+            updateFormValueWrapper(configKey, newArray)
         } else {
-            newArray[index] = value
+            formValue[index] = value
+            updateFormValueWrapper(configKey, formValue)
         }
-        updateFormValueWrapper(configKey, newArray)
     }
 
     const listRemove = (index) => {
@@ -447,7 +445,6 @@ function GridWidgetFormItem({configKey, configValue, updateConfigValueCallback})
                             <Row>
                                 <Col>
                                     <Row><GridWidgetFormItem 
-                                        key={val} 
                                         configValue={val} 
                                         configKey={ind} 
                                         updateConfigValueCallback={listUpdate}
